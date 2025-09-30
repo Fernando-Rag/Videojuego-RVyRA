@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- aframe-extras incluye componentes de física -->
+    <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-extras@master/dist/aframe-extras.physics.min.js"></script>
+  </head>
+  <body>
+    <a-scene physics="gravity: 0; debug: false">
+      <!-- Piso -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50" color="lightgray"></a-plane>
+      
+      <!-- Cámara con control WASD y mouse -->
+      <a-entity id="player"
+                camera
+                wasd-controls
+                look-controls="pointerLockEnabled: true"
+                position="0 1.6 0"
+                dynamic-body="mass: 1; shape: box;">
+        <a-cursor
+          id="cursor"
+          raycaster="objects: .collectible"
+          fuse="false"></a-cursor>
+      </a-entity>
+      
+      <!-- Texto marcador de puntos -->
+      <a-entity id="scoreText"
+                text="value: Puntos: 0; color: black; width: 6"
+                position="0 3 -5"></a-entity>
+    </a-scene>
+
+    <script>
+      let score = 0;
+      const scoreText = document.querySelector('#scoreText');
+      const scene = document.querySelector('a-scene');
+      const cursor = document.querySelector('#cursor');
+      const player = document.querySelector('#player');
+
+      // Configuración de las pelotas
+      const numEsferas = 10;
+      const minX = -5, maxX = 5;
+      const minY = 1, maxY = 5;
+      const minZ = -10, maxZ = -7;
+      const minDist = 1.2; // distancia mínima entre pelotas para no solaparse
+
+      const collectibles = [];
+
+      // Devuelve una posición aleatoria detrás del score, sin sobreponer otras pelotas
+      function randomNonOverlappingPosition(existingPositions) {
+        let tries = 0;
+        while (tries < 100) {
+          const x = minX + Math.random() * (maxX - minX);
+          const y = minY + Math.random() * (maxY - minY);
+          const z = minZ + Math.random() * (maxZ - minZ);
+          const pos = {x, y, z};
+          // Checar que la nueva posición no esté cerca de las ya existentes
+          if (existingPositions.every(other => {
+            const dx = x - other.x;
+            const dy = y - other.y;
+            const dz = z - other.z;
+            return Math.sqrt(dx*dx + dy*dy + dz*dz) > minDist;
+          })) {
+            return pos;
+          }
+          tries++;
+        }
+        // Si no encuentra, regresa algo válido (puede superponerse)
+        return {x: minX, y: minY, z: minZ};
+      }
+
+      // Crear 10 esferas en posiciones no solapadas
+      let positions = [];
+      for (let i = 0; i < numEsferas; i++) {
+        const pos = randomNonOverlappingPosition(positions);
+        positions.push(pos);
+        const sphere = document.createElement('a-sphere');
+        sphere.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`);
+        sphere.setAttribute('radius', '0.5');
+        sphere.setAttribute('color', '#' + Math.floor(Math.random()*16777215).toString(16));
+        sphere.classList.add('collectible');
+        scene.appendChild(sphere);
+        collectibles.push(sphere);
+      }
+
+      // Al recoger una pelota, reaparece en lugar aleatorio, sin solaparse
+      function collectAndRespawn(sphere) {
+        score++;
+        scoreText.setAttribute('text', 'value: Puntos: ' + score);
+        // Calcular nueva posición que no se solape
+        const otherPositions = collectibles
+          .filter(item => item !== sphere && item.getAttribute('visible'))
+          .map(item => {
+            const p = item.getAttribute('position');
+            return {x: p.x, y: p.y, z: p.z};
+          });
+        const pos = randomNonOverlappingPosition(otherPositions);
+        sphere.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`);
+        sphere.setAttribute('color', '#' + Math.floor(Math.random()*16777215).toString(16));
+        sphere.setAttribute('visible', true);
+      }
+
+      // Evento de click sobre el cursor
+      cursor.addEventListener('click', function () {
+        const intersection = cursor.components.raycaster.intersectedEls[0];
+        if (intersection && intersection.classList.contains('collectible') && intersection.getAttribute('visible')) {
+          intersection.setAttribute('visible', false);
+          setTimeout(() => collectAndRespawn(intersection), 200);
+        }
+      });
+
+      // Colisión automática por proximidad
+      function checkCollisions() {
+        const playerPos = player.object3D.position;
+        collectibles.forEach(item => {
+          if (!item.getAttribute('visible')) return;
+          const itemPos = item.object3D.position;
+          const dist = playerPos.distanceTo(itemPos);
+          if (dist < 1.2) {
+            item.setAttribute('visible', false);
+            setTimeout(() => collectAndRespawn(item), 200);
+          }
+        });
+      }
+      setInterval(checkCollisions, 100);
+    </script>
+  </body>
+</html>
