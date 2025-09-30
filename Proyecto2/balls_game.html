@@ -1,0 +1,117 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+
+      <!-- Fondo negro (espacio) -->
+      <a-sky color="#000000"></a-sky>
+
+      <!-- Piso -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50" color="lightgray"></a-plane>
+
+      <!-- Cámara con control WASD y control de vista con mouse -->
+      <a-entity id="player" camera wasd-controls look-controls="pointerLockEnabled: true" position="0 1.6 0">
+        <a-cursor color="red"></a-cursor>
+      </a-entity>      
+
+      <!-- Texto marcador de puntos -->
+      <a-entity id="scoreText" text="value: Puntos: 0; color: white; width: 15" position="0 3 -5"></a-entity>
+
+      <!-- Obstáculos rojos (esferas de varios tamaños y posiciones) -->
+      <a-sphere class="obstacle" position="5 1 0" radius="1.2" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="-5 0.8 -10" radius="0.8" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="10 1.5 10" radius="1.5" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="0 1 5" radius="1" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="-8 0.9 8" radius="0.9" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="3 1.2 7" radius="1.1" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="-7 1 -3" radius="1" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="7 1.3 -7" radius="1.3" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="12 1.1 3" radius="1" color="#cc0000"></a-sphere>
+      <a-sphere class="obstacle" position="-10 1 12" radius="1.4" color="#cc0000"></a-sphere>
+
+    </a-scene>
+
+    <script>
+      let score = 0;
+      const player = document.querySelector('#player');
+      const scoreText = document.querySelector('#scoreText');
+      const scene = document.querySelector('a-scene');
+
+      const numEsferas = 50;
+      const collectibles = [];
+
+      // Crear esferas coleccionables
+      for (let i = 0; i < numEsferas; i++) {
+        const x = (Math.random() - 0.5) * 40;
+        const z = (Math.random() - 0.5) * 40;
+        const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        const sphere = document.createElement('a-sphere');
+        sphere.setAttribute('position', `${x} 1 ${z}`);
+        sphere.setAttribute('radius', '0.5');
+        sphere.setAttribute('color', color);
+        sphere.classList.add('collectible');
+        scene.appendChild(sphere);
+        collectibles.push(sphere);
+      }
+
+      function resetGame() {
+        alert('¡Felicidades! Alcanzaste 20 puntos. El juego se reiniciará.');
+        score = 0;
+        scoreText.setAttribute('text', 'value: Puntos: 0');
+        player.setAttribute('position', '0 1.6 0');
+        // Hacer visibles todas las esferas coleccionables de nuevo
+        collectibles.forEach(sphere => sphere.setAttribute('visible', true));
+      }
+
+      function checkCollisions() {
+        const playerPos = player.object3D.position;
+
+        // Colisión con esferas coleccionables
+        collectibles.forEach(item => {
+          if (!item.getAttribute('visible')) return;
+          const itemPos = item.object3D.position;
+          const dist = playerPos.distanceTo(itemPos);
+          if (dist < 1.2) {
+            item.setAttribute('visible', false);
+            score++;
+            scoreText.setAttribute('text', 'value: Puntos: ' + score);
+
+            if (score >= 20) {
+              resetGame();
+            }
+          }
+        });
+
+        // Colisión con obstáculos (esferas rojas)
+        document.querySelectorAll('.obstacle').forEach(obstacle => {
+          const obstaclePos = obstacle.object3D.position;
+          const radius = parseFloat(obstacle.getAttribute('radius'));
+          const dist = playerPos.distanceTo(obstaclePos);
+          if (dist < radius + 0.7) {
+            alert('¡Tocaste un obstáculo! Reiniciando...');
+            score = 0;
+            scoreText.setAttribute('text', 'value: Puntos: 0');
+            player.setAttribute('position', '0 1.6 0');
+            // Restaurar visibilidad de las esferas coleccionables
+            collectibles.forEach(sphere => sphere.setAttribute('visible', true));
+          }
+        });
+      }
+
+      setInterval(checkCollisions, 100);
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
