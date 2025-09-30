@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Piso -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50" color="lightgray"></a-plane>
+
+      <!-- Cámara con control WASD -->
+      <a-entity id="player" camera wasd-controls position="0 1.6 0">
+        <a-cursor></a-cursor>
+      </a-entity>
+
+      <!-- Texto marcador de puntos -->
+      <a-entity id="scoreText" text="value: Puntos: 0; color: black; width: 6"
+                position="0 3 -5"></a-entity>
+    </a-scene>
+
+    <script>
+      let score = 0;
+      const player = document.querySelector('#player');
+      const scoreText = document.querySelector('#scoreText');
+      const scene = document.querySelector('a-scene');
+
+      // Generar muchas esferas aleatoriamente
+      const numEsferas = 50;
+      const collectibles = [];
+
+      for (let i = 0; i < numEsferas; i++) {
+        const x = (Math.random() - 0.5) * 40;  // entre -20 y 20
+        const z = (Math.random() - 0.5) * 40;  // entre -20 y 20
+        const color = '#' + Math.floor(Math.random()*16777215).toString(16); // color random
+        const sphere = document.createElement('a-sphere');
+        sphere.setAttribute('position', `${x} 1 ${z}`);
+        sphere.setAttribute('radius', '0.5');
+        sphere.setAttribute('color', color);
+        sphere.classList.add('collectible');
+        scene.appendChild(sphere);
+        collectibles.push(sphere);
+      }
+
+      function checkCollisions() {
+        const playerPos = player.object3D.position;
+        collectibles.forEach(item => {
+          if (!item.getAttribute('visible')) return;
+          const itemPos = item.object3D.position;
+          const dist = playerPos.distanceTo(itemPos);
+          if (dist < 1.2) { // distancia de colisión
+            item.setAttribute('visible', false);
+            score++;
+            scoreText.setAttribute('text', 'value: Puntos: ' + score);
+          }
+        });
+      }
+
+      setInterval(checkCollisions, 100);
+    </script>
+  </body>
+</html>

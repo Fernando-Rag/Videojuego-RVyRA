@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Piso/plaza -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="200" height="200" color="lightgray"></a-plane>
+
+      <!-- Torres Gemelas (WTC 1 y WTC 2) -->
+      <a-box position="-20 20.85 -20" width="6.3" depth="6.3" height="41.7" color="#C0C0C0"></a-box>
+      <a-box position="20 20.75 -20" width="6.3" depth="6.3" height="41.5" color="#B0B0B0"></a-box>
+
+      <!-- WTC 3 (Hotel) -->
+      <a-box position="0 3.7 -10" width="12" depth="6" height="7.4" color="#999999"></a-box>
+
+      <!-- WTC 4 (South Plaza) -->
+      <a-box position="15 5.9 -5" width="12" depth="8" height="11.8" color="#AAAAAA"></a-box>
+
+      <!-- WTC 5 (North Plaza) -->
+      <a-box position="-15 5.9 -5" width="12" depth="8" height="11.8" color="#AAAAAA"></a-box>
+
+      <!-- WTC 6 (Customs House) -->
+      <a-box position="-15 5.25 -25" width="12" depth="8" height="10.5" color="#888888"></a-box>
+
+      <!-- WTC 7 (norte de la plaza) -->
+      <a-box position="0 9.3 20" width="12" depth="8" height="18.6" color="#777777"></a-box>
+
+      <!-- Cámara -->
+      <a-entity camera look-controls position="0 10 60"></a-entity>
+
+      <!-- Cielo -->
+      <a-sky color="#87CEEB"></a-sky>
+    </a-scene>
+  </body>
+</html>

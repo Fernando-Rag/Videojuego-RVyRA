@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/jsm/objects/Water.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Agua (un gran plano) -->
+      <a-plane position="0 0 -10" rotation="-90 0 0" width="50" height="50" color="blue"></a-plane>
+
+      <!-- Isla -->
+      <a-cylinder position="0 0.25 -5" radius="2" height="0.5" color="sandybrown"></a-cylinder>
+
+      <!-- Palmeras (simples con cilindros y esferas) -->
+      <a-cylinder position="0 2 -5" radius="0.1" height="4" color="sienna"></a-cylinder>
+      <a-sphere position="0 4.5 -5" radius="1" color="green"></a-sphere>
+
+      <!-- Cielo -->
+      <a-sky color="lightblue"></a-sky>
+    </a-scene>
+  </body>
+</html>

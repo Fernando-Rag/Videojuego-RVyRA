@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Calle -->
+      <a-plane position="0 0 -10" rotation="-90 0 0" width="20" height="40" color="gray"></a-plane>
+
+      <!-- Edificios -->
+      <a-box position="-3 3 -10" depth="4" height="6" width="4" color="steelblue"></a-box>
+      <a-box position="3 5 -15" depth="6" height="10" width="6" color="darkslategray"></a-box>
+      <a-box position="0 2 -6" depth="3" height="4" width="3" color="royalblue"></a-box>
+
+      <!-- Faroles (cilindro + esfera) -->
+      <a-cylinder position="2 1 -8" height="2" radius="0.1" color="black"></a-cylinder>
+      <a-sphere position="2 2 -8" radius="0.3" color="yellow"></a-sphere>
+
+      <!-- Cielo -->
+      <a-sky color="#87CEEB"></a-sky>
+    </a-scene>
+  </body>
+</html>
