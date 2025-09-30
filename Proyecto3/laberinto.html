@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  </head>
+  <body>
+    <a-scene physics="driver: cannon; debug: false">
+
+      <!-- Fondo negro -->
+      <a-sky color="#000000"></a-sky>
+
+      <!-- Piso -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50" color="lightgray" static-body></a-plane>
+
+      <!-- Paredes del laberinto -->
+      <!-- Usa 'static-body' para que formen parte del sistema de colisiones -->
+      <a-box position="0 1.5 -10" depth="1" height="3" width="20" color="#444" static-body></a-box>
+      <a-box position="-10 1.5 0" depth="20" height="3" width="1" color="#444" static-body></a-box>
+      <a-box position="10 1.5 0" depth="20" height="3" width="1" color="#444" static-body></a-box>
+      <a-box position="0 1.5 10" depth="1" height="3" width="20" color="#444" static-body></a-box>
+
+      <!-- Paredes internas -->
+      <a-box position="-5 1.5 -5" depth="1" height="3" width="10" color="#666" static-body></a-box>
+      <a-box position="5 1.5 5" depth="1" height="3" width="10" color="#666" static-body></a-box>
+      <a-box position="0 1.5 0" depth="10" height="3" width="1" color="#666" static-body></a-box>
+
+      <!-- Cámara jugador con cuerpo para colisiones -->
+      <a-entity id="player" position="0 1.6 15" 
+                camera 
+                look-controls="pointerLockEnabled: true"
+                wasd-controls="acceleration: 20"
+                kinematic-body>
+      </a-entity>
+
+      <!-- Texto marcador de puntos -->
+      <a-entity id="scoreText" text="value: Puntos: 0; color: white; width: 15" position="0 3 -5"></a-entity>
+
+    </a-scene>
+  </body>
+</html>
